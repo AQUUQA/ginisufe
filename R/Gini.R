@@ -3,32 +3,36 @@
 #gini(组内或者组间，两组之间比较)
 
 # 该函数计算两组之间的总经济影响富裕d_jh
-gross_economic_affluence <- function(income_j, income_h){
+gross_afflue <- function(income_j, income_h){
+
   # 确保j组的平均收入不小于h组的平均收入
   if (mean(income_j) < mean(income_h)){
-    bak <- income_j
+    M <- income_j
     income_j <- income_h
-    income_h <- bak
+    income_h <- M
   }
   # 令j组元素与h组元素两两互减
-  d <- rep(income_j, each=length(income_h)) - rep(income_h, length(income_j))
-  d <- d[d > 0] # 仅保留大于0的差值
-  sum(d) / length(income_j) / length(income_h)  # 返回计算结果
+  D<-matrix(rep(income_j,length(income_h)),nrow = length(income_j))-
+    t(matrix(rep(income_h,length(income_j)),nrow = length(income_h)))
+  D[D<0]<-0
+  sum(D)/length(income_j) / length(income_h)
+
 }
 
-# 该函数计算两组之间的超变一阶矩
-transvariation <- function(income_j, income_h){
+# 该函数计算两组之间的超变一阶矩pjh
+transv <- function(income_j, income_h){
   # 确保j组的平均收入不小于h组的平均收入
   if (mean(income_j) < mean(income_h)){
-    bak <- income_j
+    M <- income_j
     income_j <- income_h
-    income_h <- bak
+    income_h <- M
   }
 
   # 令j组元素与h组元素两两互减
-  d <- rep(income_j, each=length(income_h)) - rep(income_h, length(income_j))
-  d <- abs(d[d < 0]) # 仅保留小于0的差值，不过要取绝对值转换为正数
-  sum(d) / length(income_j) / length(income_h)  # 返回计算结果
+  D<-matrix(rep(income_j,length(income_h)),nrow = length(income_j))-
+    t(matrix(rep(income_h,length(income_j)),nrow = length(income_h)))
+  D[D>0]<-0
+  sum(D)/length(income_j) / length(income_h)
 }
 
 # 该函数计算相对经济富裕D_jh
