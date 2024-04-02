@@ -1,9 +1,20 @@
 #输入两列数据
 #输出组内组间（一个矩阵）超变（矩阵）+差异净值（矩阵）
 #gini(组内或者组间，两组之间比较)
+library(magrittr)
 
+gini <- function(income_j, income_h = NULL) {
+  if (is.null(income_h)){
+    income_h <- income_j
+  }
+  (rep(income_j, length(income_h)) - rep(income_h, each=length(income_j))) %>%
+    abs %>%
+    mean %>%
+    ( function(x) { x / (mean(income_j) + mean(income_h)) } )
+
+}
 # 该函数计算两组之间的总经济影响富裕d_jh
-gross_afflue <- function(income_j, income_h){
+gross_economic_affluence <- function(income_j, income_h){
 
   # 确保j组的平均收入不小于h组的平均收入
   if (mean(income_j) < mean(income_h)){
@@ -20,7 +31,7 @@ gross_afflue <- function(income_j, income_h){
 }
 
 # 该函数计算两组之间的超变一阶矩pjh
-transv <- function(income_j, income_h){
+transvariation <- function(income_j, income_h){
   # 确保j组的平均收入不小于h组的平均收入
   if (mean(income_j) < mean(income_h)){
     M <- income_j
@@ -67,6 +78,8 @@ dagum_gini <- function(model, df){
   gini_matrix <- matrix(0, length(group), length(group),
                         dimnames = list(group, group))
   rea_matrix <- gini_matrix
+  gross_matrix <- gini_matrix
+  transv_matrix <- gini_matrix
 
   for (j in group) {
     for (h in group){
@@ -78,6 +91,8 @@ dagum_gini <- function(model, df){
       item <- G_jh * p_j * s_h
 
       gini_matrix[group == j, group == h] <- G_jh
+      gross_matrix[group == j, group == h] <-gross_economic_affluence(income_j, income_h)
+      transv_matrix[group == j, group == h] <-abs(transvariation(income_j, income_h))
 
       if (j == h){
         within <- within + item
@@ -89,15 +104,22 @@ dagum_gini <- function(model, df){
       }
     }
   }
-
+#输出组内组间（一个矩阵）
   list(
     index = data.frame(
       '指标' = c('绝对数值', '相对份额(%)'),
       '总体基尼系数' = c(total_gini_index, 100),
+      #'分组基尼系数矩阵' = group_gini_matrix,
       '组内差异贡献' = c(within, 100 * within / total_gini_index),
+      #'组内差异贡献矩阵'
       '组间差异净贡献' = c(net_between, 100 * net_between / total_gini_index),
+      #'组间差异净贡献矩阵'
       '组间超变密度贡献' = c(trans, 100 * trans / total_gini_index)),
     gini = data.frame(gini_matrix),
-    rea = data.frame(rea_matrix)
+    rea = data.frame(rea_matrix),
+    gross = data.frame(gross_matrix),
+    transv = data.frame(transv_matrix)
   )
 }
+
+
