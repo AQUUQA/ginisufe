@@ -11,20 +11,15 @@
 
 
 #检测：用不同数据，
-
-data <- read.csv("C:/Users/10120/Desktop/科研/基尼系数/代码实现/数据/fin/fin_12_sorted.csv")
-
-s_sim <- function(x,p=NULL){
+sh_sim <- function(x,p=NULL){
 
   n <- length(x)
   n_0 <- n*p/(1-p)
-  w <- rep(1,length(x))
-  w <- w/sum(w)
   wx <- x/sum(x) #生成个体财富占比
   x <- x[id <- order(x)] #对x进行排序,升序
-  w <- w[id] #对w进行排序
   wx <- wx[id] #对个体财富占比进行排序，其中的每个值即为斜率k
   if(is.null(p)){
+
     k_1 <- (wx[n]-wx[n-1])
     kk_1 <- (wx[n]-2*wx[n-1]+wx[n-3])
     kk_2 <- (wx[n-1]-2*wx[n-2]+wx[n-3])
@@ -32,6 +27,28 @@ s_sim <- function(x,p=NULL){
     s <-  (wx[n]+(k_1+kk*0.5*p)*0.5*n_0)*n_0
     print(paste("预测结果为", s))
     return(s)
+
+  }
+}
+
+
+sl_sim <- function(x,p=NULL){
+
+  n <- length(x)
+  n_0 <- n*p/(1-p)
+  wx <- x/sum(x) #生成个体财富占比
+  x <- x[id <- order(x,decreasing = TRUE)] #对x进行排序,升序
+  wx <- wx[id] #对个体财富占比进行排序，其中的每个值即为斜率k
+  if(is.null(p)){
+
+    k_1 <- (wx[n]-wx[n-1])
+    kk_1 <- (wx[n]-2*wx[n-1]+wx[n-3])
+    kk_2 <- (wx[n-1]-2*wx[n-2]+wx[n-3])
+    kk <- 0.5*(kk_1+kk_2)
+    s <-  (wx[n]+(k_1+kk*0.5*p)*0.5*n_0)*n_0
+    print(paste("预测结果为", s))
+    return(s)
+
   }
 }
 
