@@ -85,20 +85,28 @@ opt.gini <- function(x,u,ph=NULL,pl=NULL,sh=NULL,sl=NULL){
   ##进行优化
   if (u==1){
     #极高收入群体数据缺失
-    if(is.null(sh) & !is.null(ph)){
+    if (!is.null(sh)){
+      s_h <- sh
+      res_hat <- res+(1-res)*s_h*0.5
+      return(res_hat)
+    }else if(!is.null(ph)){
       s_h <- s_sim(x,ph)
       res_hat <- res+(1-res)*s_h*0.5
       return(res_hat)
-    }else if(is.null(ph) & is.null(sh)){
+    }else {
       return (NA_real_)
     }
 
   }
   else if (u==2){
    #极低收入群体数据缺失
-    p_l <- pl
-    res_hat <- res+(1-res)*p*0.5
-    return(res_hat)
+    if (!is.null(pl)){
+      p_l <- pl
+      res_hat <- res+(1-res)*p*0.5
+      return(res_hat)
+    }else{
+      return(NA_real_)
+    }
   }
   else{
     #极高收入群体与极低收入群体同时缺失
