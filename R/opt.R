@@ -3,6 +3,8 @@
 #ph缺失的极高收入人群占比
 #pl缺失的极低收入人群占比
 
+
+
 opt.gini <- function(x,u,ph=NULL,pl=NULL,sh=NULL,sl=NULL){
   ##设定内部函数，计算加权平均
   WM <- function(x, w) {
@@ -11,6 +13,45 @@ opt.gini <- function(x,u,ph=NULL,pl=NULL,sh=NULL,sl=NULL){
     total_weight <- sum(w)
     mean_value <- weighted_sum / total_weight
     return(mean_value)
+  }
+
+  sh_sim <- function(x,p=NULL){
+
+    n <- length(x)
+    n_0 <- n*p/(1-p)
+    wx <- x/sum(x) #生成个体财富占比
+    x <- x[id <- order(x)] #对x进行排序,升序
+    wx <- wx[id] #对个体财富占比进行排序，其中的每个值即为斜率k
+    if(is.null(p)){
+
+      k_1 <- (wx[n]-wx[n-1])
+      kk_1 <- (wx[n]-2*wx[n-1]+wx[n-3])
+      kk_2 <- (wx[n-1]-2*wx[n-2]+wx[n-3])
+      kk <- 0.5*(kk_1+kk_2)
+      s <-  (wx[n]+(k_1+kk*0.5*p)*0.5*n_0)*n_0
+      return(s)
+
+    }
+  }
+
+
+  sl_sim <- function(x,p=NULL){
+
+    n <- length(x)
+    n_0 <- n*p/(1-p)
+    wx <- x/sum(x) #生成个体财富占比
+    x <- x[id <- order(x,decreasing = TRUE)] #对x进行排序,升序
+    wx <- wx[id] #对个体财富占比进行排序，其中的每个值即为斜率k
+    if(is.null(p)){
+
+      k_1 <- (wx[n]-wx[n-1])
+      kk_1 <- (wx[n]-2*wx[n-1]+wx[n-3])
+      kk_2 <- (wx[n-1]-2*wx[n-2]+wx[n-3])
+      kk <- 0.5*(kk_1+kk_2)
+      s <-  (wx[n]+(k_1+kk*0.5*p)*0.5*n_0)*n_0
+      return(s)
+
+    }
   }
 
 
