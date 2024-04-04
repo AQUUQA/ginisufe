@@ -13,15 +13,6 @@ opt.gini <- function(x,u,ph=NULL,pl=NULL,sh=NULL,sl=NULL){
     return(mean_value)
   }
 
-  ##设定内部函数，已知ph预测sh
-  #sh <- function(x,ph){if(is.null)}
-  if(u==1 & is.null(sh) & !is.null(ph)){
-    sh <- s_sim(x,ph)
-  }else if(u==1 & is.null(ph) & is.null(sh)){
-    return (NA_real_)
-  }
-
-
 
   ##参数设置
   #权重w
